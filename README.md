@@ -40,33 +40,11 @@
 - torchvision 0.27.1
 - NVIDIA RTX 4060 Laptop GPU（8 GB）
 
-安装依赖：
-
-```powershell
-python -m pip install -r requirements.txt
-```
-
-如果使用 NVIDIA GPU，建议按 [PyTorch 官网](https://pytorch.org/get-started/locally/) 安装对应 CUDA 版本，不要直接装 CPU 版。
 
 ## 数据
 
 数据来源：[CIFAR-10 官方页面](https://www.cs.toronto.edu/~kriz/cifar.html)  
-直接下载：[cifar-10-python.tar.gz](https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz)  
-MD5：`c58f30108f718f92721af3b95e74349a`
 
-代码默认读取 `data/cifar-10-batches-py/`。首次运行可让 torchvision 自动下载：
-
-```powershell
-python train.py --model baseline --data data --epochs 30 --download
-```
-
-如果官方源较慢，可使用镜像下载脚本：
-
-```powershell
-python download_data.py
-```
-
-脚本会下载 `cifar-10-python.tar.gz`，校验官方 MD5 `c58f30108f718f92721af3b95e74349a`，并自动解压到 `data/`。
 
 数据划分固定为：
 
@@ -74,47 +52,6 @@ python download_data.py
 - 验证集：50,000 张中的 5,000 张（用验证集选最佳 checkpoint）
 - 测试集：官方 10,000 张，只在最后评估一次
 
-### 为什么资源管理器里看不到图片
-
-CIFAR-10 官方发布格式不是 jpg 文件夹，而是 pickle 打包的二进制批次：
-
-```text
-data/cifar-10-batches-py/
-├── data_batch_1
-├── data_batch_2
-├── data_batch_3
-├── data_batch_4
-├── data_batch_5
-└── test_batch
-```
-
-图片内容确实在里面，只是 Windows 资源管理器无法预览。把二进制批次解码成真正的 jpg 照片：
-
-```powershell
-python export_images.py --data data --out data/images --per-class 20 --size 128
-```
-
-导出后的结构：
-
-```text
-data/images/
-├── train/
-│   ├── airplane/00001.jpg
-│   ├── automobile/00002.jpg
-│   └── ...
-└── test/
-    └── ...
-```
-
-现在可以直接双击 `.jpg` 看照片。CIFAR-10 原图只有 32×32，脚本用 Lanczos 放大到 128×128，方便查看；放大不会增加真实细节。
-
-生成一张 32 张图的预览：
-
-```powershell
-python preview_data.py --images data/images/train --out figures/cifar10_samples.png
-```
-
-如果还没导出 jpg，脚本会自动回退到读取原始 batch。
 
 ## 运行说明
 
@@ -142,8 +79,6 @@ python analyze.py --results results --figures figures
 python robustness.py --results results --data data --figures figures
 python error_analysis.py --results results --figures figures --model gelu --compare baseline
 ```
-
-在本机 RTX 4060 上，`width=32`、30 轮的 baseline 约 11.6 分钟，五组共约 68 分钟；CPU 或更小的显卡会更慢。
 
 快速检查代码是否能跑：
 
@@ -239,10 +174,6 @@ python predict.py path\to\image.jpg --model baseline --checkpoint results/checkp
 python -m py_compile train.py analyze.py predict.py preview_data.py export_images.py download_data.py src/models.py src/data.py src/engine.py src/plotting.py tests/test_models.py
 python tests/test_models.py
 ```
-
-## 说明
-
-- 这是 **图像分类**，不是图像增强、去雾、超分或生成；不会修改原图。
 - 测试集不参与调参；最佳模型由验证集准确率选择，最后只评估一次测试集。
 - 为公平比较，所有变体使用同一组 `seed`、`epochs`、`batch`、学习率和数据增强。
 - `--width 32` 是轻量版，适合快速跑通；正式对比建议用默认 `--width 64`。
