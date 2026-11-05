@@ -1,0 +1,47 @@
+{
+  "conditions": {
+    "clean": "清晰",
+    "low_light": "低照度",
+    "noise": "高斯噪声",
+    "low_light_noise": "低照度+噪声"
+  },
+  "models": {
+    "baseline": {
+      "clean": 0.9221,
+      "low_light": 0.8256,
+      "noise": 0.3704,
+      "low_light_noise": 0.1028
+    },
+    "depthwise": {
+      "clean": 0.9049,
+      "low_light": 0.7141,
+      "noise": 0.3875,
+      "low_light_noise": 0.1012
+    },
+    "se": {
+      "clean": 0.9211,
+      "low_light": 0.8393,
+      "noise": 0.4092,
+      "low_light_noise": 0.1097
+    },
+    "depthwise_se": {
+      "clean": 0.9082,
+      "low_light": 0.7519,
+      "noise": 0.3694,
+      "low_light_noise": 0.1147
+    },
+    "gelu": {
+      "clean": 0.9236,
+      "low_light": 0.7997,
+      "noise": 0.2905,
+      "low_light_noise": 0.1088
+    }
+  },
+  "best_model": "gelu",
+  "adaptation": {
+    "none": 0.7997,
+    "gamma": 0.8741,
+    "brightness": 0.9157,
+    "gamma_tta": 0.8792
+  }
+}
